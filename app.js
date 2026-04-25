@@ -28,7 +28,6 @@ const winOverlay = document.getElementById('win-overlay');
 const winnerName = document.getElementById('winner-name');
 const playAgainBtn = document.getElementById('play-again-btn');
 
-// --- Dice Drawing ---
 const DICE_DOTS = {
   1: [[0.5, 0.5]],
   2: [[0.25, 0.25], [0.75, 0.75]],
@@ -49,7 +48,6 @@ function drawDice(value) {
   const ctx = c.getContext('2d');
   ctx.scale(2, 2);
 
-  // Die body
   ctx.fillStyle = '#F5E6C8';
   ctx.strokeStyle = '#8B7355';
   ctx.lineWidth = 1.5;
@@ -68,7 +66,6 @@ function drawDice(value) {
   ctx.fill();
   ctx.stroke();
 
-  // Dots
   if (value && DICE_DOTS[value]) {
     ctx.fillStyle = '#2C1810';
     DICE_DOTS[value].forEach(([dx, dy]) => {
@@ -81,7 +78,6 @@ function drawDice(value) {
   diceDisplay.appendChild(c);
 }
 
-// --- Dice Roll Animation ---
 function animateDiceRoll(finalValue) {
   return new Promise(resolve => {
     let frame = 0;
@@ -127,7 +123,6 @@ function animateToken(player, from, to) {
       if (current === to) {
         resolve();
       } else {
-        // Ease: faster in middle, slower at start/end
         const t = stepIndex / totalSteps;
         const ease = 60 + 60 * (1 - Math.sin(t * Math.PI));
         setTimeout(tick, Math.min(ease, 140));
@@ -159,7 +154,58 @@ function updateTurnIndicator() {
   const p = engine.currentPlayer;
   turnIndicator.innerHTML = `<span class="player-dot" style="background:${p.color}"></span> ${p.name}'s turn`;
 }
+async function executeTurn(isHuman) {
+  isAnimating = true;
+  rollBtn.disabled = true;
+
+  const player = engine.currentPlayer;
+  const dice = engine.rollDice();
+
+  await animateDiceRoll(dice);
+
+  const result = engine.executeMove(engine.currentPlayerIndex, dice);
+
+  if (result.type === 'bounce') {
+    addLog(player.name + ' rolled ' + dice + " - cannot move, exact roll needed.", 'bounce');
+  } else {
+    await animateToken(player, result.from, result.landOn);
+
+    if (result.type === 'snake') {
+      addLog(player.name + ' rolled ' + dice + ' and landed on ' + result.landOn + '. Snake to ' + result.finalPos + '.', 'snake');
+      await new Promise(r => setTimeout(r, 350));
+      await animateToken(player, result.landOn, result.finalPos);
+    } else if (result.type === 'ladder') {
+      addLog(player.name + ' rolled ' + dice + ' and landed on ' + result.landOn + '. Ladder to ' + result.finalPos + '.', 'ladder');
+      await new Promise(r => setTimeout(r, 350));
+      await animateToken(player, result.landOn, result.finalPos);
+    } else {
+      addLog(player.name + ' rolled ' + dice + ' and moved to ' + result.finalPos + '.', 'normal');
+    }
+
+    if (result.won) {
+      addLog(player.name + ' wins the game!', 'win');
+      showWinScreen(player);
+      isAnimating = false;
+      return;
+    
+    }
   
+  }
+
+  renderer.render(engine.players);
+  engine.advanceTurn();
+  updatePlayerList();
+  updateTurnIndicator();
+
+  isAnimating = false;
+
+  if (engine.currentPlayer.isBot && !engine.gameOver) {
+    setTimeout(() => executeTurn(false), 900);
+  } else {
+    rollBtn.disabled = false;
+  }
+}
+
 function startGame() {
   const name = playerNameInput.value.trim() || 'You';
   const botCount = parseInt(botCountSelect.value);
