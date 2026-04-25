@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang=""en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="A classic Snakes and Ladders board game. Play against bots or online with your friends.">
+  <title>Snakes & Ladders — A Game of Fate</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
+</head>
+
+<body>
+
+  <div id="menu-screen" class="screen">
+    <h1 class="menu-title">Snakes & Ladders</h1>
+    <p class="menu-subtitle">A game of fate</p>
+
+    <div class="menu-card">
+      <div class="form-group">
+        <label for="player-name">Your Name</label>
+        <input type="text" id="player-name" placeholder="Enter your name" maxlength="16" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label for="bot-count">Opponents</label>
+        <select id="bot-count">
+          <option value="1">1 Bot</option>
+          <option value="2" selected>2 Bots</option>
+          <option value="3">3 Bots</option>
+        </select>
+      </div>
+
+      <div class="ornament">✦</div>
+
+      <button id="start-btn" class="btn btn-primary start-btn">Begin the Game</button>
+    </div>
+  </div>
+
+  <div id=""game-screen" class="screen">
+    <div class="board-section">
+      <div id="board-wrapper">
+        <canvas id="board-canvas"></canvas>
+      </div>
+    </div>
+
+    <div class="controls-bar">
+      <div class="controls-left">
+        <div id="turn-indicator" class="turn-indicator">Roll to <strongart</div>
+        <div class="player-list" id="player-list"></div>
+      </div>
+
+      <div class="controls-center">
+        <div id="dice-display"></div>
+        <button id="roll-btn" class="btn roll-btn" disabled>Roll Dice</button>
+      </div>
+
+      <div class="controls-right">
+        <button id="restart-btn" class="btn restart-btn">New Game</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="win-overlay" class="win-overlay">
+    <div class="win-card">
+      <div class="win-crown">👑</div>
+      <div class="win-title">Victory!</div>
+      <div id="winner-name" class="win-name"></div>
+    <button id="play-again-btn" class="btn btn-primary">Play Again</button>
+    </div>
+  </div>
+
+  <script></script>
+</body>
+
+</html></strong>

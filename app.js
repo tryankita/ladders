@@ -27,6 +27,7 @@ const restartBtn = document.getElementById('restart-btn');
 const winOverlay = document.getElementById('win-overlay');
 const winnerName = document.getElementById('winner-name');
 const playAgainBtn = document.getElementById('play-again-btn');
+const gameLog = document.getElementById('game-log');
 
 const DICE_DOTS = {
   1: [[0.5, 0.5]],
@@ -147,8 +148,13 @@ function updatePlayerList() {
     playerList.appendChild(el);
   });
 }
-
-function addLog() {}
+function addLog(message, type = 'normal') {
+  const row = document.createElement('div');
+  row.className = 'log-entry log-' + type;
+  row.textContent = message;
+  gameLog.appendChild(row);
+  gameLog.scrollTop = gameLog.scrollHeight;
+}
 
 function updateTurnIndicator() {
   const p = engine.currentPlayer;
@@ -204,6 +210,24 @@ async function executeTurn(isHuman) {
   } else {
     rollBtn.disabled = false;
   }
+}
+function showWinScreen(player) {
+  winnerName.textContent = player.name;
+  winnerName.style.color = player.color;
+  winOverlay.classList.add('visible');
+}
+
+function hideWinScreen() {
+  winOverlay.classList.remove('visible');
+}
+function sizeBoard() {
+  const controlsHeight = 140;
+  const padding = 28;
+  const availH = window.innerHeight - controlsHeight - padding;
+  const availW = window.innerWidth - padding * 2;
+  const sz = Math.floor(Math.min(availW, availH));
+  renderer.resize(sz);
+  renderer.render(engine ? engine.players : []);
 }
 
 function startGame() {
