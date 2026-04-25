@@ -137,4 +137,157 @@ export class BoardRenderer {
       ctx.stroke();
     }
   }
+  drawSnakes() {
+    const { ctx, cs } = this;
+    Object.entries(SNAKES).forEach(([head, tail]) => {
+      const from = this.cellCenter(parseInt(head));
+      const to = this.cellCenter(parseInt(tail));
+      this._drawSnake(ctx, from, to, cs);
+    });
+  }
+
+  _drawSnake(ctx, from, to, cs) {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const segs = Math.max(4, Math.floor(dist / (cs * 0.6)));
+
+    const pts = [];
+    for (let i = 0; i <= segs; i++) {
+      const t = i / segs;
+      const bx = from.x + dx * t;
+      const by = from.y + dy * t;
+      const perpX = -dy / dist;
+      const perpY = dx / dist;
+      const amp = cs * 0.25 * Math.sin(t * MIDIAccesath.PI);
+      const wave = Math.sin(t * Math.PI * 2.5) * amp;
+      pts.push({ x: bx + perpX * wave, y: by + perpY * wave });
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      const prev = pts[i - 1];
+      const cur = pts[i];
+      ctx.quadraticCurveTo(prev.x, prev.y, (prev.x + cur.x) / 2, (prev.y + cur.y) / 2);
+    }
+    ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+    ctx.strokeStyle = 'rgba(80,20,0,0.2)';
+    ctx.lineWidth = cs * 0.16;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      const prev = pts[i - 1];
+      const cur = pts[i];
+      ctx.quadraticCurveTo(prev.x, prev.y, (prev.x + cur.x) / 2, (prev.y + cur.y) / 2);
+    }
+    ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+    ctx.strokeStyle = COLORS.snakeBody;
+    ctx.lineWidth = cs * 0.10;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      const prev = pts[i - 1];
+      const cur = pts[i];
+      ctx.quadraticCurveTo(prev.x, prev.y, (prev.x + cur.x) / 2, (prev.y + cur.y) / 2);
+    }
+    ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+    ctx.strokeStyle = COLORS.snakeAccent;
+    ctx.lineWidth = cs * 0.04;
+    ctx.setLineDash([cs * 0.08, cs * 0.06]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.arc(from.x, from.y, cs * 0.09, 0, Math.PI * 2);
+    ctx.fillStyle = COLORS.snakeBody;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(from.x - cs * 0.03, from.y - cs * 0.02, cs * 0.02, 0, Math.PI * 2);
+    ctx.arc(from.x + cs * 0.03, from.y - cs * 0.02, cs * 0.02, 0, Math.PI * 2);
+    ctx.fillStyle = '#FFE4B5';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(to.x, to.y, cs * 0.035, 0, Math.PI * 2);
+    ctx.fillStyle = COLORS.snakeAccent;
+    ctx.fill();
+  }
+
+  drawPlayers(players) {
+    const { ctx, cs } = this;
+    const onBoard = players.filter(p => p.position > 0);
+
+    const groups = {};
+    onBoard.forEach(p => {
+      if (!groups[p.position]) groups[p.position] = [];
+      groups[p.position].push(p);
+    });
+
+    Object.entries(groups).forEach(([pos, group]) => {
+      const center = this.cellCenter(parseInt(pos));
+      const r = cs * 0.12;
+      const offsets = this._tokenOffsets(group.length, cs * 0.14);
+      group.forEach((p, i) => {
+        const ox = center.x + offsets[i].x;
+        const oy = center.y + offsets[i].y;
+        
+        ctx.beginPath();
+        ctx.arc(ox + 1.5, oy + 2, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.fill();
+        
+        const grad = ctx.createRadialGradient(ox - r * 0.3, oy - r * 0.3, r * 0.1, ox, oy, r);
+        grad.addColorStop(0, this._lighten(p.color, 40));
+        grad.addColorStop(1, p.color);
+        ctx.beginPath();
+        ctx.arc(ox, oy, r, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = `bold ${r * 1.1}px 'Spectral', serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.name[0], ox, oy + 1);
+      });
+    });
+  }
+
+  _tokenOffsets(count, spread) {
+    if (count === 1) return [{ x: 0, y: 4 }];
+    const offsets = [];
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count - Math.PI / 2;
+      offsets.push({ x: Math.cos(angle) * spread, y: Math.sin(angle) * spread + 4 });
+    }
+    return offsets;
+  }
+
+  _lighten(hex, amount) {
+    let r = parseInt(hex.slice(1, 3), 16);
+    let g = parseInt(hex.slice(3, 5), 16);
+    let b = parseInt(hex.slice(5, 7), 16);
+    r = Math.min(255, r + amount);
+    g = Math.min(255, g + amount);
+    b = Math.min(255, b + amount);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  render(players) {
+    this.drawBoard();
+    this.drawLadders();
+    this.drawSnakes();
+    this.drawPlayers(players);
+  }
 }
