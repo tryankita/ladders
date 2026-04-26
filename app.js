@@ -1,6 +1,7 @@
 // app.js — Single Player Snakes & Ladders with Bots
 import { GameEngine, Player } from './engine.js';
 import { BoardRenderer } from './renderer.js';
+import { GameEngine, Player, generateBoardData } from './engine.js';
 
 const BOT_NAMES = ['Arjun', 'Meera', 'Kavi'];
 const PLAYER_COLORS = {
@@ -92,7 +93,6 @@ function animateDiceRoll(finalValue) {
         clearInterval(interval);
         diceDisplay.style.transform = 'rotate(0) scale(1)';
         drawDice(finalValue);
-        // Brief pulse on final value
         diceDisplay.style.transition = 'transform 0.2s cubic-bezier(0.34,1.56,0.64,1)';
         diceDisplay.style.transform = 'scale(1.15)';
         setTimeout(() => {

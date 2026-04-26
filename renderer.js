@@ -16,8 +16,15 @@ export class BoardRenderer {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.size = 0;
-    this.cs = 0; // cell size
+    this.cs = 0;
     this.dpr = 1;
+    this.snakes = SNAKES;
+    this.ladders = LADDERS;
+  }
+
+  setBoard(snakes, ladders) {
+      this.snakes = snakes;
+      this.ladders = ladders;
   }
 
   resize(containerWidth) {
