@@ -21,14 +21,42 @@ export class Player {
     this.hasWon = false;
   }
 }
+export function generateBoardData() {
+  const snakes = {};
+  const ladders = {};
+  const used = new Set([1, 100]); 
 
+  for (let i = 0; i < 10; i++) {
+    let head, tail;
+    do {
+      head = Math.floor(Math.random() * 88) + 11; 
+      tail = Math.floor(Math.random() * (head - 2)) + 2; 
+    } while (used.has(head) || used.has(tail));
+    snakes[head] = tail;
+    used.add(head); used.add(tail);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    let bottom, top;
+    do {
+      bottom = Math.floor(Math.random() * 88) + 2; 
+      top = Math.floor(Math.random() * (99 - bottom)) + bottom + 1; 
+    } while (used.has(bottom) || used.has(top));
+    ladders[bottom] = top;
+    used.add(bottom); used.add(top);
+  }
+  
+  return { snakes, ladders };
+}
 export class GameEngine {
-  constructor(players) {
-    this.players = players;
-    this.currentPlayerIndex = 0;
-    this.gameOver = false;
-    this.winner = null;
-    this.moveLog = [];
+  constructor(players, boardData = null) {
+      this.players = players;
+      this.snakes = boardData ? boardData.snakes : SNAKES;
+      this.ladders = boardData ? boardData.ladders : LADDERS;
+      this.currentPlayerIndex = 0;
+      this.gameOver = false;
+      this.winner = null;
+      this.moveLog = [];
   }
 
   rollDice() {
