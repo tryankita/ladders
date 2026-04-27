@@ -26,7 +26,7 @@ export function generateBoardData() {
   const ladders = {};
   const used = new Set([1, 100]); 
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 6; i++) {
     let head, tail;
     do {
       head = Math.floor(Math.random() * 88) + 11; 
@@ -78,12 +78,12 @@ export class GameEngine {
     let type = 'normal';
     let finalPos = landOn;
 
-    if (SNAKES[landOn]) {
+    if (this.snakes[landOn]) {
       type = 'snake';
-      finalPos = SNAKES[landOn];
-    } else if (LADDERS[landOn]) {
+      finalPos = this.snakes[landOn];
+    } else if (this.ladders[landOn]) {
       type = 'ladder';
-      finalPos = LADDERS[landOn];
+      finalPos = this.ladders[landOn];
     }
 
     player.position = finalPos;

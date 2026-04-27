@@ -144,5 +144,5 @@ wss.on('connection', ws => {
 });
 
 httpServer.listen(PORT, () => {
-  console.log(`\n  🎲 Snakes & Ladders server running at http://localhost:${PORT}\n`);
+  console.log(`\nSnakes & Ladders server running at http://localhost:${PORT}\n`);
 });

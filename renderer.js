@@ -52,6 +52,8 @@ export class BoardRenderer {
 
   drawBoard() {
     const { ctx, cs, size } = this;
+    const snakes = this.snakes || {};
+    const ladders = this.ladders || {};
     ctx.clearRect(0, 0, size, size);
 
     for (let i = 0; i < GRID * GRID; i++) {
@@ -70,10 +72,10 @@ export class BoardRenderer {
       ctx.strokeRect(x, y, cs, cs);
 
       // Highlight snake/ladder cells
-      if (SNAKES[pos]) {
+      if (snakes[pos]) {
         ctx.fillStyle = 'rgba(139,37,0,0.07)';
         ctx.fillRect(x, y, cs, cs);
-      } else if (LADDERS[pos]) {
+      } else if (ladders[pos]) {
         ctx.fillStyle = 'rgba(200,169,81,0.10)';
         ctx.fillRect(x, y, cs, cs);
       }
@@ -96,7 +98,7 @@ export class BoardRenderer {
 
   drawLadders() {
     const { ctx, cs } = this;
-    Object.entriesoL (LADDERS).forEach(([bot, top]) => {
+    Object.entries(this.ladders || {}).forEach(([bot, top]) => {
       const a = this.cellCenter(parseInt(bot));
       const b = this.cellCenter(parseInt(top));
       this._drawLadder(ctx, a, b, cs);
@@ -146,7 +148,7 @@ export class BoardRenderer {
   }
   drawSnakes() {
     const { ctx, cs } = this;
-    Object.entries(SNAKES).forEach(([head, tail]) => {
+    Object.entries(this.snakes || {}).forEach(([head, tail]) => {
       const from = this.cellCenter(parseInt(head));
       const to = this.cellCenter(parseInt(tail));
       this._drawSnake(ctx, from, to, cs);
@@ -166,7 +168,7 @@ export class BoardRenderer {
       const by = from.y + dy * t;
       const perpX = -dy / dist;
       const perpY = dx / dist;
-      const amp = cs * 0.25 * Math.sin(t * MIDIAccesath.PI);
+      const amp = cs * 0.25 * Math.sin(t * Math.PI);
       const wave = Math.sin(t * Math.PI * 2.5) * amp;
       pts.push({ x: bx + perpX * wave, y: by + perpY * wave });
     }
