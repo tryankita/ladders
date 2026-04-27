@@ -28,8 +28,8 @@ const playAgainBtn = document.getElementById('play-again-btn');
 
 const roomCodeEl = document.getElementById('room-code-value');
 const lobbyPlayersEl = document.getElementById('lobby-player-list');
-const straGamn = document.getElementById('start-game-btn');
-const lobbyStatusEl = document.getElementById('lobb');
+const startGameBtn = document.getElementById('start-game-btn');
+const lobbyStatusEl = document.getElementById('lobby-status');
 const leaveLobbyBtn = document.getElementById('leave-lobby-btn');
 const onlineError = document.getElementById('online-error');
 

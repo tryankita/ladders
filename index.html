@@ -19,23 +19,69 @@
     <p class="menu-subtitle">A game of fate</p>
 
     <div class="menu-card">
-      <div class="form-group">
-        <label for="player-name">Your Name</label>
-        <input type="text" id="player-name" placeholder="Enter your name" maxlength="16" autocomplete="off">
+      <div class="mode-toggle">
+        <button type="button" class="mode-tab active" data-mode="solo">Solo</button>
+        <button type="button" class="mode-tab" data-mode="online">Online</button>
       </div>
 
-      <div class="form-group">
-        <label for="bot-count">Opponents</label>
-        <select id="bot-count">
-          <option value="1">1 Bot</option>
-          <option value="2" selected>2 Bots</option>
-          <option value="3">3 Bots</option>
-        </select>
+      <div id="solo-form">
+        <div class="form-group">
+          <label for="player-name">Your Name</label>
+          <input type="text" id="player-name" placeholder="Enter your name" maxlength="16" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="bot-count">Opponents</label>
+          <select id="bot-count">
+            <option value="1">1 Bot</option>
+            <option value="2" selected>2 Bots</option>
+            <option value="3">3 Bots</option>
+          </select>
+        </div>
+
+        <div class="ornament">✦</div>
+        <button id="start-btn" class="btn btn-primary start-btn" type="button">Begin the Game</button>
       </div>
+
+      <div id="online-form" style="display: none;">
+        <div class="form-group">
+          <label for="online-name">Your Name</label>
+          <input type="text" id="online-name" placeholder="Enter your name" maxlength="16" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="room-code-input">Room Code</label>
+          <input type="text" id="room-code-input" class="code-input" placeholder="1234" maxlength="4" inputmode="numeric" autocomplete="off">
+        </div>
+
+        <div class="ornament">✦</div>
+
+        <div class="online-actions">
+          <button id="host-btn" class="btn btn-primary start-btn" type="button">Host Room</button>
+          <button id="join-btn" class="btn start-btn" type="button">Join Room</button>
+        </div>
+
+        <div id="online-error" class="online-error"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="lobby-screen" class="screen">
+    <h2 class="lobby-title">Online Lobby</h2>
+
+    <div class="lobby-card">
+      <div class="lobby-code-label">Room Code</div>
+      <div id="room-code-value" class="room-code">----</div>
+      <div class="lobby-code-hint">Share this code with your friends</div>
 
       <div class="ornament">✦</div>
 
-      <button id="start-btn" class="btn btn-primary start-btn">Begin the Game</button>
+      <div class="lobby-section-label">Players</div>
+      <div id="lobby-player-list" class="lobby-players"></div>
+      <div id="lobby-status" class="lobby-status">Waiting for players</div>
+
+      <button id="start-game-btn" class="btn btn-primary start-btn" type="button" style="display: none;">Start Game</button>
+      <button id="leave-lobby-btn" class="btn start-btn" type="button">Leave Lobby</button>
     </div>
   </div>
 

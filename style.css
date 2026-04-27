@@ -256,7 +256,7 @@ body {
   border: 1.5px solid var(--parchment-dark);
   border-radius: 4px;
   overflow: hidden;
-  margin-bottom: 24px;
+  margin: 0 auto 24px;
   max-width: 240px;
   width: 100%;
 }
